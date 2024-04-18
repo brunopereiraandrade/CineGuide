@@ -1,10 +1,33 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import Constants from 'expo-constants'
 import Header from '../Componentes/Header';
 
 export default function Tela2({navigation}) {
+  const [user,setuser] = useState('bacags');
+    const [senha,setsenha] = useState('');
+
+   async function logar(){
+    const headeroptions = {
+        method: 'post',
+        header: {
+            'Content type': 'applicatio/json',
+        },
+        body: JSON.stringify({user, senha}),
+    };
+    const response = await fetch('https://servidorx', headeroptions);
+    if (response.status === 200){
+        const token = await response.text();
+        await AsyncStorage.setItem('token', token);
+        navigation.navigate('TeladeFilmes');
+       
+    }
+    else{
+        Alert.alert('Erro', 'Usuário ou senha invalidos')
+    };
+    }
 
   
   return (
@@ -12,12 +35,12 @@ export default function Tela2({navigation}) {
       <StatusBar style="auto" />
       <Header navigation={navigation}/> 
       <View>
-        <TextInput style={styles.input} placeholder='Usuário...'/>
-        <TextInput style={styles.input2} placeholder='Senha...'/>
+        <TextInput style={styles.input} placeholder='Usuário...' value={user} onChangeText={setuser}/>
+        <TextInput style={styles.input2} placeholder='Senha...' value={senha} onChangeText={setsenha}/>
         <TouchableOpacity style={styles.sendbuton}>
           <Text>Entrar</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.registerbutton} onPress={() => navigation.navigate('TeladeRegistro')}>
+        <TouchableOpacity style={styles.registerbutton} onPress={() => logar()}>
           <Text style={{ color: 'green' }}>Registrar-se</Text>
         </TouchableOpacity>
       </View>         
