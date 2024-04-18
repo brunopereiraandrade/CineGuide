@@ -20,13 +20,41 @@ export default function TeladeRegistro({navigation}){
     validarEmail(user)
     if (validarEmail(user)) {
       novo_objeto = new usuario(user, senha)
-      navigation.navigate('TeladeLogin')
-      
+      enviarObjetoParaServidor(novo_objeto)
+      navigation.navigate('TeladeLogin')    
   } else {
       Alert.alert("e-mail invalido");
   } 
    }
 
+
+   function enviarObjetoParaServidor(objetoParaEnviar) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const urlDoServidor = 'https://servidorx';
+        const opcoesDeRequisicao = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(objetoParaEnviar)
+        };
+  
+        const resposta = await fetch(urlDoServidor, opcoesDeRequisicao);
+  
+        if (!resposta.ok) {
+          throw new Error('Erro ao enviar os dados para o servidor.');
+        }
+  
+        const dados = await resposta.json();
+        resolve(dados); 
+      } catch (erro) {
+        Alert.alert('Erro', 'Ocorreu um erro ao enviar os dados para o servidor. Por favor, tente novamente mais tarde.');
+        reject(erro); 
+      }
+    });
+  }
+  
   function validarEmail(email) {
     // Expressão regular para validar o formato do e-mail
     var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
