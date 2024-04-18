@@ -6,7 +6,7 @@ import Constants from 'expo-constants'
 import Header from '../Componentes/Header';
 
 export default function Tela2({navigation}) {
-  const [user,setuser] = useState('bacags');
+  const [user,setuser] = useState('');
     const [senha,setsenha] = useState('');
 
    async function logar(){
